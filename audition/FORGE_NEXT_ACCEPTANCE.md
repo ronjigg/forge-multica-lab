@@ -34,3 +34,19 @@ No migration until all mandatory gates pass, including **real** parallel worker 
 
 ## Next concrete test
 S0 independent source/security check, then S1 no-provider synthetic startup in isolated ephemeral environment. Do not authorise an audition run before security and runtime boundary checks.
+
+## Privacy and supply-chain security gate (added 2026-11-06)
+
+**No sensitive data in GitHub audition repositories.** These are public code/test labs. Use only synthetic fixtures and disposable repositories; never commit prompts with personal content, real project files, keys, PATs, provider cookies, environment files, crash dumps or identifying worker logs. No audition is authorised to clone/read/write the private live Forge repository.
+
+Before credentials or real workloads, produce a security review with links to reproducible evidence:
+
+1. **Source provenance and integrity:** pin exact upstream commit/release and record SHA-256 of fetched binaries/images; review installer and auto-update behaviour and publisher workflow. Avoid `curl | sh`/unsigned executables as a trust shortcut.
+2. **Static and dependency scanning:** run static-analysis/security rules appropriate to the language; scan dependencies and lockfiles against current advisories; secret scan; generate software bill of materials (SBOM); review vendored code, GitHub Actions, containers, and external scripts. Triaged HIGH/CRITICAL issues block release unless demonstrably unreachable and documented.
+3. **Data-flow map:** enumerate local and remote endpoints, telemetry/analytics defaults, auth endpoints, LLM providers, Git providers, upload/sync routes, crash reporting, logs/backups, and whether credentials, prompts or code can leave the host. Packet/egress checks must corroborate code/docs where possible.
+4. **Privilege boundary:** inspect how agents launch subprocesses, shell commands, plugins, worktrees and mounts; reject unrestricted host/user execution in trials. Run in a disposable locked-down environment with network allowlist and a kill switch. Check traversal/symlinks/command injection/webhooks/API permissions.
+5. **Credentials and identity:** use synthetic or narrowly scoped accounts only after S0/S1 pass, no third-party hosted workspace sign-in for the test, no persistent credentials in repo/workflow logs. Verify local-only login where supported and access revocation.
+6. **Permissioned operations:** use allowlisted read/status commands initially. No automatic production promotion; testing from ChatGPT Plus via GitHub is limited to non-sensitive command IDs/results until an independently reviewed private channel exists.
+7. **Security conclusion:** record PASS / FAIL / BLOCKED and open residual risks; don't call the platform 'secure' solely because scans pass. Human review of dangerous execution paths is mandatory.
+
+**Special Multica requirement:** its documented self-hosted deployment telemetry is enabled by default. For isolated trials set `DO_NOT_TRACK=1`, and separately inspect optional analytics integrations; verify by network egress observation. Authentication for the self-hosted instance must not rely on a vendor-hosted account. See https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md .
